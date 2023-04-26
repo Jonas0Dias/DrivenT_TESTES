@@ -17,7 +17,7 @@ export async function findHotels(req: AuthenticatedRequest, res: Response, next:
 
   export async function findHotelsById(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response> {
     const { userId } = req;
-    const { hotelId } = (req.params)
+    const hotelId = Number(req.params.hotelId)
   
     try {
       const hotelWithRoom = await hotelsService.findHotelsById(userId, hotelId);

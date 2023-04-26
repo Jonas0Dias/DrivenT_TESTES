@@ -22,7 +22,7 @@ async function findHotels(userId: number): Promise<Hotel[]> {
   }
 
 
-  async function findHotelsById(userId: number, hotelId: string): Promise<Hotel & { Rooms: Room[] }> {
+  async function findHotelsById(userId: number, hotelId: number): Promise<Hotel & { Rooms: Room[] }> {
     const Hotel: HotelWithRooms = await hotelsRepositoty.findHotelsById(hotelId);
     const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
     const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
