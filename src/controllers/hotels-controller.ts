@@ -5,7 +5,7 @@ import hotelsService from '@/services/hotels-service';
 import { InputTicketBody } from '@/protocols';
 
 export async function findHotels(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response> {
-    const { userId } = req;
+    const { userId }  = req;
   
     try {
       const hotel = await hotelsService.findHotels(userId);
@@ -18,6 +18,7 @@ export async function findHotels(req: AuthenticatedRequest, res: Response, next:
   export async function findHotelsById(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<Response> {
     const { userId } = req;
     const hotelId = Number(req.params.hotelId)
+    console.log(typeof hotelId)
   
     try {
       const hotelWithRoom = await hotelsService.findHotelsById(userId, hotelId);

@@ -52,17 +52,21 @@ type GetAddressResult = Omit<Address, 'createdAt' | 'updatedAt' | 'enrollmentId'
 
 async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollmentWithAddress) {
   const enrollment = exclude(params, 'address');
+
   const address = getAddressForUpsert(params.address);
+
 
   try {
     await getAddressFromCEP(address.cep);
+
   } catch {
     throw invalidDataError(['invalid CEP']);
   }
-
+  console.log(params.userId, enrollment)
   const newEnrollment = await enrollmentRepository.upsert(params.userId, enrollment, exclude(enrollment, 'userId'));
 
   await addressRepository.upsert(newEnrollment.id, address, address);
+
 }
 
 function getAddressForUpsert(address: CreateAddressParams) {
