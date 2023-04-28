@@ -39,7 +39,7 @@ async function findHotels(userId: number): Promise<Hotel[]> {
 
     const ticketWithType = await ticketsRepository.findTickeWithTypeById(ticket.id)
 
-    if (ticketWithType.TicketType.isRemote || ticket.status !== "PAID" || !ticketWithType.TicketType.includesHotel) throw httpStatus.PAYMENT_REQUIRED
+    if (ticketWithType.TicketType.isRemote || ticket.status !== "PAID" || !ticketWithType.TicketType.includesHotel) throw  cannotListHotelsError();
     
     if (!Hotel) throw notFoundError();
     
