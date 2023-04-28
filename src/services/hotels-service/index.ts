@@ -1,5 +1,5 @@
 import { Address, Enrollment, Hotel, Room } from '@prisma/client';
-import { notFoundError } from '@/errors';
+import { notFoundError, cannotListHotelsError} from '@/errors';
 import enrollmentRepository from '@/repositories/enrollment-repository';
 import ticketsRepository from '@/repositories/tickets-repository';
 import hotelsRepositoty from '@/repositories/hotels-repositoty';
@@ -19,8 +19,8 @@ async function findHotels(userId: number): Promise<Hotel[]> {
 
     const ticketWithType = await ticketsRepository.findTickeWithTypeById(ticket.id)
 
-    if (ticketWithType.TicketType.isRemote || ticket.status !== "PAID" || !ticketWithType.TicketType.includesHotel) throw httpStatus.PAYMENT_REQUIRED
-    
+    if (ticketWithType.TicketType.isRemote || ticket.status !== "PAID" || !ticketWithType.TicketType.includesHotel) throw cannotListHotelsError();
+
     if (Hotels.length===0 ) throw notFoundError();
     return Hotels;
     
@@ -30,13 +30,19 @@ async function findHotels(userId: number): Promise<Hotel[]> {
   async function findHotelsById(userId: number, hotelId: number): Promise<Hotel & { Rooms: Room[] }> {
     const Hotel: HotelWithRooms = await hotelsRepositoty.findHotelsById(hotelId);
     const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
+   if (!enrollment) throw notFoundError();
+
     const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
 
-    const ticketWithType = await ticketsRepository.findTickeWithTypeById(ticket.id)
-    
+    if (!ticket) throw notFoundError();
+    console.log('teste tickets')
 
-    if (!Hotel || !enrollment || !ticket) throw notFoundError();
+    const ticketWithType = await ticketsRepository.findTickeWithTypeById(ticket.id)
+
     if (ticketWithType.TicketType.isRemote || ticket.status !== "PAID" || !ticketWithType.TicketType.includesHotel) throw httpStatus.PAYMENT_REQUIRED
+    
+    if (!Hotel) throw notFoundError();
+    
     
     return Hotel;
   }  
